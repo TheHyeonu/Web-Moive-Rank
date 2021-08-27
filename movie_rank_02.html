@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주간/주말 박스오피스 예제 (2)</title>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="config.js"></script>
+
+    <script type="text/javascript" language="javascript">
+        //  config.MOVIE_API_KEY: 영화진흥위원회 발급 API KEY
+
+        var movieUrl = "http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.xml?key=" + config.MOVIE_API_KEY +"&targetDt=20210801"
+        $(document).ready(function(){
+            $.ajax({
+                type: 'get', // 통신방식 (GET/POST)
+                dataType: 'xml', // 서버로부터 응답 받을 데이터 형식
+                url: movieUrl, // 통신할 대상 페이지가 있는 url 주소
+                success: function(data) {
+                    for (var i = 0; i < 10; i++) {
+                        $('body').append("<p>" + 
+                            "순위: " + $(data).find('dailyBoxOffice').eq(i).find('rnum').text() + "<br>" +
+                            "제목: " + $(data).find('dailyBoxOffice').eq(i).find('movieNm').text() + "<br>" +
+                            "개봉일: " + $(data).find('dailyBoxOffice').eq(i).find('openDt').text() + "<br>" +
+                            "누적관객수: " + $(data).find('dailyBoxOffice').eq(i).find('audiAcc').text() + "<br>" +
+                        "</p>")
+                    } 
+
+                }, // 통신이 성공했을 때 수행될 콜백 함수
+                error: function(req) {
+                    alert('통신을 실패하였습니다. 상태 : ' + req.status + ', ' + req.requestText + ', ' + req.error);
+                } // 통신이 실패했을 때 수행될 콜백 함수     
+            });
+             
+        });
+
+        //  천 단위 ,(콤마) 찍기
+        function numberToString(audiAcc) {
+            return audiAcc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        
+    </script>
+
+</head>
+<body>
+    <P>주간/박스오피스 순위 정보</P>
+</body>
+</html>
